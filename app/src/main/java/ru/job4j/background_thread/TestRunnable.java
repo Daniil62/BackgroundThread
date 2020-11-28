@@ -1,5 +1,6 @@
 package ru.job4j.background_thread;
 
+import android.os.Handler;
 import android.util.Log;
 
 public class TestRunnable implements Runnable {
@@ -14,10 +15,12 @@ public class TestRunnable implements Runnable {
     }
     @Override
     public void run() {
+        Handler handler = MainActivity.getHandler();
         while (count != time && isRunning) {
             String TAG = "Runnable_tag";
             Log.d(TAG, "Runnable thread count: " + count);
             ++count;
+            handler.post(() -> MainActivity.setRunnableCountText(count));
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {

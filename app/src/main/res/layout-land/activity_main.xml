@@ -24,13 +24,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
         android:orientation="vertical"
         android:paddingBottom="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toEndOf="@+id/general_stop_button"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/thread_count_textView"
@@ -109,16 +109,17 @@
                 tools:layout_editor_absoluteX="220dp"
                 tools:layout_editor_absoluteY="339dp" />
         </LinearLayout>
+
     </LinearLayout>
 
     <ImageButton
         android:id="@+id/general_stop_button"
         android:layout_width="wrap_content"
         android:layout_height="145dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="80dp"
         android:onClick="generalStop"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/linearLayout2"
         app:srcCompat="@android:drawable/ic_media_pause"
         tools:ignore="ContentDescription" />
@@ -128,11 +129,13 @@
         android:layout_width="150dp"
         android:layout_height="200dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/general_start_button"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_gallery"
         tools:ignore="ContentDescription" />
 
