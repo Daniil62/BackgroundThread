@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">Background Thread</string>
-    <string name="thread">Thread</string>
-    <string name="runnable">Runnable</string>
+    <string name="thread_count">Thread count:\t</string>
 </resources>
