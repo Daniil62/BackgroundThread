@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Background Thread</string>
     <string name="thread_count">Thread count:\t</string>
+    <string name="asynctask">Async Task</string>
 </resources>
