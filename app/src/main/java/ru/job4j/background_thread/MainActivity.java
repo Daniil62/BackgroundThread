@@ -16,14 +16,22 @@ import android.widget.Toast;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.text.MessageFormat;
+import java.util.concurrent.TimeUnit;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
     private Thread thread;
     private TextView threadText;
+    private TextView info;
     private Bitmap bitmap;
     private ImageView image;
     private ProgressBar pb;
     private ProgressBar pb2;
+    private ProgressBar pb3;
+    private Disposable sbr;
     public static WeakReference<MainActivity> activityWeakReference;
     private String url = "https://cdn.trinixy.ru/pics6/20200224/189250_12_trinixy_ru.jpg";
     @Override
@@ -33,22 +41,34 @@ public class MainActivity extends AppCompatActivity {
         ImageButton start_thread = findViewById(R.id.start_thread_button);
         ImageButton stop_thread = findViewById(R.id.stop_thread_button);
         threadText = findViewById(R.id.thread_count_textView);
+        info = findViewById(R.id.info_textView);
         image = findViewById(R.id.imageView);
         Button asyncTaskButton = findViewById(R.id.async_task_button);
+        Button startRx = findViewById(R.id.start_rx_button);
+        Button stopRx = findViewById(R.id.stop_rx_button);
         pb = findViewById(R.id.progressBar);
         pb2 = findViewById(R.id.progressBar2);
+        pb3 = findViewById(R.id.progressBar3);
+        boolean recreated = savedInstanceState != null;
+        final int startAt = recreated ? savedInstanceState.getInt(
+                "pb3_progress", 0) : 0;
+        String text = startAt + " %";
+        info.setText(text);
         start_thread.setOnClickListener(v -> startThread());
         stop_thread.setOnClickListener(v -> stopThread());
         image.setOnClickListener(v -> new ImageAsyncTask(this).execute(url));
         asyncTaskButton.setOnClickListener(v ->
             new SampleAsyncTask(this).execute(20)
         );
+        startRx.setOnClickListener(v -> startRx(startAt));
+        stopRx.setOnClickListener(v -> stopRx());
     }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("picture", bitmap);
         outState.putString("text", threadText.getText().toString());
+        outState.putInt("pb3_progress", pb3.getProgress());
     }
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -58,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
             image.setImageBitmap(bitmap);
         }
         threadText.setText(savedInstanceState.getString("text"));
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopRx();
     }
     private void startThread() {
         thread = new Thread() {
@@ -98,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return bitmap;
     }
+//=================================================================================================
     private static class SampleAsyncTask extends AsyncTask<Integer, Integer, String> {
         SampleAsyncTask(MainActivity activity) {
             activityWeakReference = new WeakReference<>(activity);
@@ -183,6 +209,27 @@ public class MainActivity extends AppCompatActivity {
             activity.image.setImageBitmap(b);
             activity.bitmap = b;
             activity.pb2.setVisibility(View.INVISIBLE);
+        }
+    }
+//=================================================================================================
+    private void startRx(int startAt) {
+        if (this.sbr == null || sbr.isDisposed()) {
+            sbr = Observable.interval(1, TimeUnit.SECONDS).observeOn(
+                    AndroidSchedulers.mainThread()).subscribe(
+                    v -> {
+                        info.setText(MessageFormat.format("{0}%", startAt + v.intValue()));
+                        pb3.setVisibility(View.VISIBLE);
+                        pb3.setProgress(startAt + v.intValue());
+                        if (pb3.getProgress() == 100) {
+                            stopRx();
+                        }
+                    });
+        }
+    }
+    private void stopRx() {
+        if (this.sbr != null) {
+            sbr.dispose();
+            this.pb3.setVisibility(View.INVISIBLE);
         }
     }
 }
